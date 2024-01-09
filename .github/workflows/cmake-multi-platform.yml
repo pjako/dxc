@@ -54,13 +54,6 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Set reusable strings
-      # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
@@ -70,11 +63,11 @@ jobs:
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
-
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: >
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release --target dxcompiler
+        tar -czvf dxc_${{RUNNER_OS}}.tar.gz ${{steps.strings.outputs.build-output-dir}}/DirectXShaderCompiler/lib/libdxcompiler.dylib DirectXShaderCompiler/include/dxc/dxcapi.h DirectXShaderCompiler/include/dxc/WinAdapter.h
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest
@@ -87,3 +80,12 @@ jobs:
           ${{ steps.Changelog.outputs.changelog }}
         draft: false
         prerelease: false
+    - name: upload artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dxc_${{RUNNER_OS}}.tar.gz
+        asset_name: dxc_${{RUNNER_OS}}.tar.gz
+        asset_content_type: application/gzip
