@@ -55,7 +55,8 @@ jobs:
         submodules: recursive
 
     - name: Display CPU Architecture
-      run: echo "CPU Architecture: ${{ runner.architecture }}"
+      run: >
+        echo "CPU Architecture: ${{ runner.architecture }}"
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
