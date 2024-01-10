@@ -79,24 +79,28 @@ jobs:
       run: >
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release --target dxcompiler
 
+    - name: make release folders
+      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      run: >
+        mkdir lib
+        mkdir include
+
     - name: copy artifacts
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: >
-        mkdir lib &&
         if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
-            cp build/DirectXShaderCompiler/lib/libdxcompiler.so lib/libdxcompiler.so
+            cp ${{ steps.strings.outputs.build-output-dir }}/DirectXShaderCompiler/lib/libdxcompiler.so lib/libdxcompiler.so
             echo "DXC_LIB_PATH=lib/libdxcompiler.so" >> $GITHUB_ENV
         elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            cp build/DirectXShaderCompiler/lib/libdxcompiler.dll lib/libdxcompiler.dll
+            cp ${{ steps.strings.outputs.build-output-dir }}/DirectXShaderCompiler/lib/libdxcompiler.dll lib/libdxcompiler.dll
             echo "DXC_LIB_PATH=lib/libdxcompiler.dll" >> $GITHUB_ENV
         elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-            cp build/DirectXShaderCompiler/lib/libdxcompiler.dylib lib/libdxcompiler.dylib 
+            cp ${{ steps.strings.outputs.build-output-dir }}/DirectXShaderCompiler/lib/libdxcompiler.dylib lib/libdxcompiler.dylib
             echo "DXC_LIB_PATH=lib/libdxcompiler.dylib" >> $GITHUB_ENV
         else
             echo "Unsupported operating system: ${{ matrix.os }}"
         fi
-        mkdir include &&
-        cp DirectXShaderCompiler/include/dxc/dxcapi.h include/dxcapi.h &&
+        cp DirectXShaderCompiler/include/dxc/dxcapi.h include/dxcapi.h
         cp DirectXShaderCompiler/include/dxc/WinAdapter.h include/WinAdapter.h
   
     - name: zip artifacts
