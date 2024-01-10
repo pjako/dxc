@@ -60,7 +60,6 @@ jobs:
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-        echo "artifact-output-file=${{ github.workspace }}/artifact/dxc_${{matrix.os}}.tar.gz" >> "$GITHUB_OUTPUT"
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -76,7 +75,7 @@ jobs:
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: >
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release --target dxcompiler
-        tar -czvf ${{artifact-output-file}} ${{steps.strings.outputs.build-output-dir}}/DirectXShaderCompiler/lib/libdxcompiler.dylib DirectXShaderCompiler/include/dxc/dxcapi.h DirectXShaderCompiler/include/dxc/WinAdapter.h
+        tar -czvf dxc_${{matrix.os}}.tar.gz ${{steps.strings.outputs.build-output-dir}}/DirectXShaderCompiler/lib/libdxcompiler.dylib DirectXShaderCompiler/include/dxc/dxcapi.h DirectXShaderCompiler/include/dxc/WinAdapter.h
 
     - name: Create Release
       id: create_release
@@ -97,6 +96,6 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{artifact-output-file}}
-        asset_name: ${{artifact-output-file}}
+        asset_path: dxc_${{matrix.os}}.tar.gz
+        asset_name: dxc_${{matrix.os}}.tar.gz
         asset_content_type: application/gzip
