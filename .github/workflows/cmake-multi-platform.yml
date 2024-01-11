@@ -74,7 +74,11 @@ jobs:
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: >
-        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release --target dxcompiler
+        if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+          cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release --target dxcompiler -DCMAKE_SYSTEM_PROCESSOR=arm64
+        else
+          cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release --target dxcompiler
+        fi
 
     - name: make release folders
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
@@ -97,6 +101,10 @@ jobs:
         else
             echo "Unsupported operating system: ${{ matrix.os }}"
         fi
+        
+    - name: copy header
+      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      run: >
         cp DirectXShaderCompiler/include/dxc/dxcapi.h include/dxcapi.h
         cp DirectXShaderCompiler/include/dxc/WinAdapter.h include/WinAdapter.h
   
