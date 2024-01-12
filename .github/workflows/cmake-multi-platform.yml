@@ -64,6 +64,7 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      shell: bash
       run: >
         if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
           cmake -B ${{ steps.strings.outputs.build-output-dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -S ${{ github.workspace }}
@@ -73,17 +74,20 @@ jobs:
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      shell: bash
       run: >
           cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release --target dxcompiler
 
     - name: make release folders
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      shell: bash
       run: >
-        mkdir lib
+        mkdir lib &&
         mkdir include
 
     - name: copy artifacts
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      shell: bash
       run: >
         if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
             cp ${{ steps.strings.outputs.build-output-dir }}/DirectXShaderCompiler/lib/libdxcompiler.so lib/libdxcompiler.so
@@ -100,12 +104,14 @@ jobs:
         
     - name: copy header
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      shell: bash
       run: >
-        cp DirectXShaderCompiler/include/dxc/dxcapi.h include/dxcapi.h
+        cp DirectXShaderCompiler/include/dxc/dxcapi.h include/dxcapi.h &&
         cp DirectXShaderCompiler/include/dxc/WinAdapter.h include/WinAdapter.h
   
     - name: zip artifacts
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      shell: bash
       run: >
         tar -czvf dxc-${{matrix.os}}.tar.gz $DXC_LIB_PATH include/dxcapi.h include/WinAdapter.h
 
