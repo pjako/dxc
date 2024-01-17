@@ -60,9 +60,9 @@ jobs:
       shell: bash
       run: >
         if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-          echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+          echo "build_output_dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
         else
-          echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+          echo "build_output_dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
         fi
 
     - name: Configure CMake
@@ -71,17 +71,17 @@ jobs:
       shell: bash
       run: >
         if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-          mkdir "${{ steps.strings.outputs.build-output-dir }}" &&
-          cmake -B ${{ steps.strings.outputs.build-output-dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -S ${{ github.workspace }}
+          mkdir "${{ steps.strings.outputs.build_output_dir }}" &&
+          cmake -B ${{ steps.strings.outputs.build_output_dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -S ${{ github.workspace }}
         else
-          cmake -B ${{ steps.strings.outputs.build-output-dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -S ${{ github.workspace }}
+          cmake -B ${{ steps.strings.outputs.build_output_dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -S ${{ github.workspace }}
         fi
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       shell: bash
       run: >
-          cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release --target dxcompiler
+          cmake --build ${{ steps.strings.outputs.build_output_dir }} --config Release --target dxcompiler
 
     - name: make release folders
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
@@ -95,13 +95,13 @@ jobs:
       shell: bash
       run: >
         if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
-            cp ${{ steps.strings.outputs.build-output-dir }}/DirectXShaderCompiler/lib/libdxcompiler.so lib/libdxcompiler.so
+            cp ${{ steps.strings.outputs.build_output_dir }}/DirectXShaderCompiler/lib/libdxcompiler.so lib/libdxcompiler.so
             echo "DXC_LIB_PATH=lib/libdxcompiler.so" >> $GITHUB_ENV
         elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            cp ${{ steps.strings.outputs.build-output-dir }}/DirectXShaderCompiler/lib/libdxcompiler.dll lib/libdxcompiler.dll
+            cp ${{ steps.strings.outputs.build_output_dir }}/DirectXShaderCompiler/lib/libdxcompiler.dll lib/libdxcompiler.dll
             echo "DXC_LIB_PATH=lib/libdxcompiler.dll" >> $GITHUB_ENV
         elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-            cp ${{ steps.strings.outputs.build-output-dir }}/DirectXShaderCompiler/lib/libdxcompiler.dylib lib/libdxcompiler.dylib
+            cp ${{ steps.strings.outputs.build_output_dir }}/DirectXShaderCompiler/lib/libdxcompiler.dylib lib/libdxcompiler.dylib
             echo "DXC_LIB_PATH=lib/libdxcompiler.dylib" >> $GITHUB_ENV
         else
             echo "Unsupported operating system: ${{ matrix.os }}"
