@@ -73,6 +73,7 @@ jobs:
         if [[ "${{ matrix.os }}" = "macos-latest" ]]; then
           cmake -B ${{ steps.strings.outputs.build_output_dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -S ${{ github.workspace }}
         else
+          echo "targetpath: '${{ steps.strings.outputs.build_output_dir }}'"
           mkdir "${{ steps.strings.outputs.build_output_dir }}"
           cmake -B ${{ steps.strings.outputs.build_output_dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -S ${{ github.workspace }}
         fi
