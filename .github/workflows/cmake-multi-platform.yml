@@ -75,6 +75,7 @@ jobs:
         else
           echo "targetpath: '${{ steps.strings.outputs.build_output_dir }}'"
           echo "github.workspace: '${{ github.workspace }}'"
+          cmake --version
           mkdir "${{ steps.strings.outputs.build_output_dir }}"
           cmake -B "${{ steps.strings.outputs.build_output_dir }}" -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -S ${{ github.workspace }}
         fi
