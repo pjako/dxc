@@ -60,7 +60,6 @@ jobs:
       shell: bash
       run: >
         if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-          mkdir "${{ GITHUB_OUTPUT }}\\build"
           echo "build-output-dir=${{ github.workspace }}\\build" >> "$GITHUB_OUTPUT"
         else
           echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
@@ -72,6 +71,7 @@ jobs:
       shell: bash
       run: >
         if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+          mkdir "${{ teps.strings.outputs.build-output-dir }}" &&
           cmake -B ${{ steps.strings.outputs.build-output-dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -S ${{ github.workspace }}
         else
           cmake -B ${{ steps.strings.outputs.build-output-dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -S ${{ github.workspace }}
