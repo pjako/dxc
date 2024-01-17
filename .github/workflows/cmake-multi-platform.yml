@@ -59,7 +59,7 @@ jobs:
       id: strings
       shell: bash
       run: >
-        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+        if [[ "${{ matrix.os }}" = "windows-latest" ]]; then
           echo "build_output_dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
         else
           echo "build_output_dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
@@ -70,10 +70,10 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       shell: bash
       run: >
-        if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-          mkdir "${{ steps.strings.outputs.build_output_dir }}" &&
+        if [[ "${{ matrix.os }}" = "macos-latest" ]]; then
           cmake -B ${{ steps.strings.outputs.build_output_dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -S ${{ github.workspace }}
         else
+          mkdir "${{ steps.strings.outputs.build_output_dir }}"
           cmake -B ${{ steps.strings.outputs.build_output_dir }} -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -S ${{ github.workspace }}
         fi
 
@@ -94,13 +94,13 @@ jobs:
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       shell: bash
       run: >
-        if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+        if [[ "${{ matrix.os }}" = "ubuntu-latest" ]]; then
             cp ${{ steps.strings.outputs.build_output_dir }}/DirectXShaderCompiler/lib/libdxcompiler.so lib/libdxcompiler.so
             echo "DXC_LIB_PATH=lib/libdxcompiler.so" >> $GITHUB_ENV
-        elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+        elif [[ "${{ matrix.os }}" = "windows-latest" ]]; then
             cp ${{ steps.strings.outputs.build_output_dir }}/DirectXShaderCompiler/lib/libdxcompiler.dll lib/libdxcompiler.dll
             echo "DXC_LIB_PATH=lib/libdxcompiler.dll" >> $GITHUB_ENV
-        elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+        elif [[ "${{ matrix.os }}" = "macos-latest" ]]; then
             cp ${{ steps.strings.outputs.build_output_dir }}/DirectXShaderCompiler/lib/libdxcompiler.dylib lib/libdxcompiler.dylib
             echo "DXC_LIB_PATH=lib/libdxcompiler.dylib" >> $GITHUB_ENV
         else
